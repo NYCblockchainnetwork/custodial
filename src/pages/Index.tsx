@@ -4,6 +4,8 @@ import { ProductCard } from '@/components/earn/ProductCard';
 import { TransactionForm } from '@/components/earn/TransactionForm';
 import { TransactionHistory } from '@/components/earn/TransactionHistory';
 import { OffersList } from '@/components/earn/OffersList';
+import { BasicWithdrawalForm } from '@/components/earn/BasicWithdrawalForm';
+import { BasicDepositForm } from '@/components/earn/BasicDepositForm';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
@@ -78,7 +80,7 @@ const Index = () => {
       <section>
         <h2 className="text-2xl font-bold mb-4">Earn Products</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {products.map((product) => (
+          {products?.map((product) => (
             <ProductCard
               key={product.id}
               product={product}
@@ -112,7 +114,7 @@ const Index = () => {
                 <TransactionForm
                   type="withdrawal"
                   currency="USDC"
-                  maxAmount={balances[0]?.available || 0}
+                  maxAmount={balances?.[0]?.available || 0}
                   onSubmit={handleWithdraw}
                 />
               </TabsContent>
@@ -124,6 +126,26 @@ const Index = () => {
       {/* Transaction History Section */}
       <section>
         <TransactionHistory transactions={transactions} />
+      </section>
+
+      {/* Basic Form Examples Section */}
+      <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div>
+          <h3 className="text-xl font-semibold mb-4">Basic Withdrawal Form Example</h3>
+          <BasicWithdrawalForm 
+            onSubmit={async (amount) => {
+              console.log('Withdrawal amount:', amount);
+            }}
+          />
+        </div>
+        <div>
+          <h3 className="text-xl font-semibold mb-4">Basic Deposit Form Example</h3>
+          <BasicDepositForm 
+            onSubmit={async (amount) => {
+              console.log('Deposit amount:', amount);
+            }}
+          />
+        </div>
       </section>
     </div>
   );
