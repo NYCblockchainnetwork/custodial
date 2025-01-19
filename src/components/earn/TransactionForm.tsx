@@ -110,10 +110,10 @@ export const TransactionForm = ({
                 <SelectItem 
                   key={product.currency} 
                   value={product.currency}
-                  className="flex justify-between items-center"
+                  className="flex justify-between items-center hover:bg-accent/10"
                 >
                   <span>{product.currency}</span>
-                  <span className="text-secondary text-sm">{product.apy}% APY</span>
+                  <span className="text-secondary ml-2">{product.apy}% APY</span>
                 </SelectItem>
               ))}
             </SelectContent>
