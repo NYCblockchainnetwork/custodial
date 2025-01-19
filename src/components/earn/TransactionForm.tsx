@@ -2,19 +2,23 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from '@/hooks/use-toast';
+import { formLayouts, LayoutVariant } from '@/lib/layoutVariants';
 
 interface TransactionFormProps {
   type: 'deposit' | 'withdrawal';
   currency: string;
   maxAmount: number;
   onSubmit: (amount: number) => Promise<void>;
+  variant?: LayoutVariant;
 }
 
-/**
- * TransactionForm Component
- * Handles both deposits and withdrawals with amount validation
- */
-export const TransactionForm = ({ type, currency, maxAmount, onSubmit }: TransactionFormProps) => {
+export const TransactionForm = ({ 
+  type, 
+  currency, 
+  maxAmount, 
+  onSubmit,
+  variant = 'default' 
+}: TransactionFormProps) => {
   const [amount, setAmount] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -60,9 +64,9 @@ export const TransactionForm = ({ type, currency, maxAmount, onSubmit }: Transac
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className={formLayouts[variant]}>
       <div>
-        <label htmlFor="amount" className="earn-label">
+        <label htmlFor="amount" className="block text-sm font-medium mb-2">
           Amount ({currency})
         </label>
         <Input
@@ -75,15 +79,16 @@ export const TransactionForm = ({ type, currency, maxAmount, onSubmit }: Transac
           max={maxAmount}
           step="0.01"
           required
+          className="w-full"
         />
-        <p className="text-sm text-gray-500 mt-1">
+        <p className="text-sm mt-1 opacity-70">
           Available: {maxAmount} {currency}
         </p>
       </div>
       <Button
         type="submit"
         disabled={isSubmitting}
-        className="w-full"
+        className="w-full mt-4"
       >
         {isSubmitting ? 'Processing...' : `Confirm ${type}`}
       </Button>

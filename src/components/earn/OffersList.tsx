@@ -11,6 +11,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { TransactionForm } from './TransactionForm';
+import { offerLayouts, LayoutVariant } from '@/lib/layoutVariants';
 
 // Initialize API with configuration
 const earnApi = createEarnAPI(
@@ -47,7 +48,11 @@ const sampleProduct = {
   apy: 9.5,
 };
 
-export const OffersList = () => {
+interface OffersListProps {
+  variant?: LayoutVariant;
+}
+
+export const OffersList = ({ variant = 'default' }: OffersListProps) => {
   const { data: products = [] } = useQuery({
     queryKey: ['earnProducts'],
     queryFn: () => earnApi.getProducts(),
@@ -59,7 +64,7 @@ export const OffersList = () => {
   // const allProducts = products;
 
   return (
-    <Card className="w-full max-w-2xl mx-auto">
+    <Card className={`w-full max-w-2xl mx-auto ${offerLayouts[variant]}`}>
       <CardHeader>
         <CardTitle className="text-2xl font-bold">
           Earn Account earnings performance
@@ -77,7 +82,7 @@ export const OffersList = () => {
                 <div className="font-medium">
                   {getCryptoName(product.currency)}
                 </div>
-                <div className="text-sm text-gray-500">
+                <div className="text-sm opacity-70">
                   {product.currency}
                 </div>
               </div>
@@ -104,6 +109,7 @@ export const OffersList = () => {
                       type="deposit"
                       currency={product.currency}
                       maxAmount={520.023}
+                      variant={variant}
                       onSubmit={async (amount) => {
                         // Handle deposit
                         console.log('Deposit:', amount);
@@ -115,7 +121,7 @@ export const OffersList = () => {
             </div>
           </div>
         ))}
-        <p className="text-sm text-gray-500 text-center mt-4">
+        <p className="text-sm opacity-70 text-center mt-4">
           APY based on previous 14-day performance
         </p>
       </CardContent>
