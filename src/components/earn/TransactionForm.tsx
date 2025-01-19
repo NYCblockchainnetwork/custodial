@@ -63,6 +63,11 @@ export const TransactionForm = ({
     }
   };
 
+  const setPercentage = (percentage: number) => {
+    const calculatedAmount = (maxAmount * percentage).toFixed(6);
+    setAmount(calculatedAmount.toString());
+  };
+
   return (
     <form onSubmit={handleSubmit} className={formLayouts[variant]}>
       <div>
@@ -77,10 +82,48 @@ export const TransactionForm = ({
           placeholder={`Enter ${type} amount`}
           min="0"
           max={maxAmount}
-          step="0.01"
+          step="0.000001"
           required
           className="w-full"
         />
+        <div className="flex gap-2 mt-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => setPercentage(0.25)}
+            className="flex-1"
+          >
+            25%
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => setPercentage(0.5)}
+            className="flex-1"
+          >
+            50%
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => setPercentage(0.75)}
+            className="flex-1"
+          >
+            75%
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => setPercentage(1)}
+            className="flex-1"
+          >
+            100%
+          </Button>
+        </div>
         <p className="text-sm mt-1 opacity-70">
           Available: {maxAmount} {currency}
         </p>

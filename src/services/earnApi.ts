@@ -1,28 +1,28 @@
-import { EarnProduct, Balance, Transaction, EarnStats } from '../types/earn';
+import { Balance, EarnProduct, Transaction } from '@/types/earn';
 
-/**
- * EarnAPI Service
- * Handles all interactions with the Coinchange YaaS API
- */
-class EarnAPI {
+export class EarnAPI {
   private baseUrl: string;
   private apiKey: string;
+  private useMockData: boolean;
 
-  constructor(baseUrl: string, apiKey: string) {
+  constructor(baseUrl: string, apiKey: string, useMockData = true) {
     this.baseUrl = baseUrl;
     this.apiKey = apiKey;
+    this.useMockData = useMockData;
   }
 
   private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-    // For development/demo purposes, return mock data instead of making API calls
-    if (endpoint.includes('transactions')) {
-      return this.getMockTransactions() as T;
-    }
-    if (endpoint.includes('balances')) {
-      return this.getMockBalances() as T;
-    }
-    if (endpoint.includes('products')) {
-      return this.getMockProducts() as T;
+    // For development/demo purposes, return mock data if enabled
+    if (this.useMockData) {
+      if (endpoint.includes('transactions')) {
+        return this.getMockTransactions() as T;
+      }
+      if (endpoint.includes('balances')) {
+        return this.getMockBalances() as T;
+      }
+      if (endpoint.includes('products')) {
+        return this.getMockProducts() as T;
+      }
     }
 
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
@@ -35,7 +35,7 @@ class EarnAPI {
     });
 
     if (!response.ok) {
-      throw new Error(`API Error: ${response.statusText}`);
+      throw new Error(`API request failed: ${response.statusText}`);
     }
 
     return response.json();
@@ -96,9 +96,10 @@ class EarnAPI {
     ];
   }
 
-  /**
-   * Fetches available earn products and their current APY rates
-   */
+  public setUseMockData(useMock: boolean) {
+    this.useMockData = useMock;
+  }
+
   async getProducts(): Promise<EarnProduct[]> {
     return this.request<EarnProduct[]>('/api/yaas/v1/products/');
   }
@@ -138,4 +139,6 @@ class EarnAPI {
   }
 }
 
-export const createEarnAPI = (baseUrl: string, apiKey: string) => new EarnAPI(baseUrl, apiKey);
+export const createEarnAPI = (baseUrl: string, apiKey: string, useMockData = true) => {
+  return new EarnAPI(baseUrl, apiKey, useMockData);
+};

@@ -12,7 +12,6 @@ import {
 import { TransactionForm } from './TransactionForm';
 import { offerLayouts, LayoutVariant } from '@/lib/layoutVariants';
 
-// Sample products for demonstration
 const sampleProducts = [
   {
     id: 'sample-usdc',
@@ -44,15 +43,15 @@ const sampleProducts = [
 const getCryptoIcon = (currency: string) => {
   switch (currency.toUpperCase()) {
     case 'BTC':
-      return <Bitcoin className="w-8 h-8" />;
+      return <Bitcoin className="w-6 h-6" />;
     case 'ETH':
-      return <Coins className="w-8 h-8" />;
+      return <Coins className="w-6 h-6" />;
     case 'USDC':
     case 'USDT':
     case 'DAI':
-      return <DollarSign className="w-8 h-8" />;
+      return <DollarSign className="w-6 h-6" />;
     default:
-      return <CircleDollarSign className="w-8 h-8" />;
+      return <CircleDollarSign className="w-6 h-6" />;
   }
 };
 
@@ -72,7 +71,6 @@ interface OffersListProps {
 }
 
 export const OffersList = ({ variant = 'default' }: OffersListProps) => {
-  // Using sample data instead of API call
   const { data: products = sampleProducts } = useQuery({
     queryKey: ['earnProducts'],
     queryFn: () => Promise.resolve(sampleProducts),
@@ -95,16 +93,16 @@ export const OffersList = ({ variant = 'default' }: OffersListProps) => {
 
   return (
     <Card className={`w-full max-w-2xl mx-auto ${offerLayouts[variant]}`}>
-      <CardHeader>
+      <CardHeader className="pb-2">
         <CardTitle className="text-2xl font-bold">
           Earn Account earnings performance
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-2">
         {products.map((product) => (
           <div
             key={product.id}
-            className={`flex items-center justify-between p-4 border-b last:border-b-0 rounded-lg transition-colors ${getItemStyles()}`}
+            className={`flex items-center justify-between p-3 border-b last:border-b-0 rounded-lg transition-colors ${getItemStyles()}`}
           >
             <div className="flex items-center gap-3">
               {getCryptoIcon(product.currency)}
@@ -144,7 +142,6 @@ export const OffersList = ({ variant = 'default' }: OffersListProps) => {
                       maxAmount={520.023}
                       variant={variant}
                       onSubmit={async (amount) => {
-                        // Handle deposit
                         console.log('Deposit:', amount);
                       }}
                     />
@@ -154,7 +151,7 @@ export const OffersList = ({ variant = 'default' }: OffersListProps) => {
             </div>
           </div>
         ))}
-        <p className="text-sm opacity-70 text-center mt-4">
+        <p className="text-sm opacity-70 text-center mt-2">
           APY based on previous 14-day performance
         </p>
       </CardContent>
