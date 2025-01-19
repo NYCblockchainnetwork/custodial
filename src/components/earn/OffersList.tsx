@@ -75,7 +75,7 @@ interface OffersListProps {
   variant?: LayoutVariant;
 }
 
-export const OffersList = ({ variant = 'neo-brutalism' }: OffersListProps) => {
+export const OffersList = ({ variant = 'default' }: OffersListProps) => {
   const { data: products = sampleProducts } = useQuery({
     queryKey: ['earnProducts'],
     queryFn: () => Promise.resolve(sampleProducts),
