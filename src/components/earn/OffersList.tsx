@@ -2,6 +2,14 @@ import { useQuery } from '@tanstack/react-query';
 import { createEarnAPI } from '@/services/earnApi';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Bitcoin, CircleDollarSign, Coins } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 // Initialize API with configuration
 const earnApi = createEarnAPI(
@@ -31,11 +39,23 @@ const getCryptoName = (currency: string) => {
   return names[currency] || currency;
 };
 
+// Sample product for demonstration - can be commented out when not needed
+const sampleProduct = {
+  id: 'sample-usdc',
+  currency: 'USDC',
+  apy: 9.5,
+};
+
 export const OffersList = () => {
   const { data: products = [] } = useQuery({
     queryKey: ['earnProducts'],
     queryFn: () => earnApi.getProducts(),
   });
+
+  // Uncomment the next line to include the sample USDC product
+  const allProducts = [...products, sampleProduct];
+  // Comment out the above line and uncomment the next line to remove sample product
+  // const allProducts = products;
 
   return (
     <Card className="w-full max-w-2xl mx-auto">
@@ -45,7 +65,7 @@ export const OffersList = () => {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {products.map((product) => (
+        {allProducts.map((product) => (
           <div
             key={product.id}
             className="flex items-center justify-between p-4 border-b last:border-b-0"
@@ -61,8 +81,37 @@ export const OffersList = () => {
                 </div>
               </div>
             </div>
-            <div className="text-lg font-semibold">
-              {product.apy.toFixed(1)}% APY
+            <div className="flex items-center gap-4">
+              <div className="text-lg font-semibold">
+                {product.apy.toFixed(1)}% APY
+              </div>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button variant="secondary" size="sm">
+                    Earn
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle className="flex items-center gap-2">
+                      {getCryptoIcon(product.currency)}
+                      {getCryptoName(product.currency)}
+                    </DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4 py-4">
+                    <Button className="w-full" onClick={() => {}}>
+                      Deposit to Earn Account
+                    </Button>
+                    <Button 
+                      className="w-full" 
+                      variant="outline"
+                      onClick={() => {}}
+                    >
+                      Withdraw From Earn Account
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
             </div>
           </div>
         ))}
