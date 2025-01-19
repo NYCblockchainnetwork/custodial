@@ -17,26 +17,31 @@ const sampleProducts = [
     id: 'sample-usdc',
     currency: 'USDC',
     apy: 9.5,
+    description: 'Earn on your USDC holdings'
   },
   {
     id: 'sample-usdt',
     currency: 'USDT',
     apy: 8.75,
+    description: 'Earn on your USDT holdings'
   },
   {
     id: 'sample-eth',
     currency: 'ETH',
     apy: 5.2,
+    description: 'Earn on your ETH holdings'
   },
   {
     id: 'sample-btc',
     currency: 'BTC',
     apy: 4.8,
+    description: 'Earn on your BTC holdings'
   },
   {
     id: 'sample-dai',
     currency: 'DAI',
     apy: 8.9,
+    description: 'Earn on your DAI holdings'
   }
 ];
 
@@ -86,6 +91,12 @@ export const OffersList = ({ variant = 'default' }: OffersListProps) => {
         return 'border-green-200 hover:bg-green-50';
       case 'monochrome':
         return 'border-gray-400 hover:bg-gray-200';
+      case 'minimal':
+        return 'border-none shadow-sm hover:shadow-md';
+      case 'glass':
+        return 'border-white/20 backdrop-blur-sm hover:bg-white/90';
+      case 'gradient':
+        return 'border-indigo-100 hover:from-indigo-100 hover:to-purple-100';
       default:
         return 'border-gray-200 hover:bg-gray-50';
     }
@@ -111,7 +122,7 @@ export const OffersList = ({ variant = 'default' }: OffersListProps) => {
                   {getCryptoName(product.currency)}
                 </div>
                 <div className="text-sm opacity-70">
-                  {product.currency}
+                  {product.description}
                 </div>
               </div>
             </div>
