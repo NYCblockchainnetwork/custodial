@@ -86,13 +86,13 @@ export const TransactionForm = ({
           required
           className="w-full"
         />
-        <div className="flex gap-2 mt-2">
+        <div className="flex gap-1 mt-1 justify-start">
           <Button
             type="button"
             variant="outline"
             size="sm"
             onClick={() => setPercentage(0.25)}
-            className="flex-1"
+            className="h-6 px-2 text-xs"
           >
             25%
           </Button>
@@ -101,7 +101,7 @@ export const TransactionForm = ({
             variant="outline"
             size="sm"
             onClick={() => setPercentage(0.5)}
-            className="flex-1"
+            className="h-6 px-2 text-xs"
           >
             50%
           </Button>
@@ -110,7 +110,7 @@ export const TransactionForm = ({
             variant="outline"
             size="sm"
             onClick={() => setPercentage(0.75)}
-            className="flex-1"
+            className="h-6 px-2 text-xs"
           >
             75%
           </Button>
@@ -119,7 +119,7 @@ export const TransactionForm = ({
             variant="outline"
             size="sm"
             onClick={() => setPercentage(1)}
-            className="flex-1"
+            className="h-6 px-2 text-xs"
           >
             100%
           </Button>
