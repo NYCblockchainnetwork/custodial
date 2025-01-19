@@ -15,25 +15,15 @@ interface ProductCardProps {
 export const ProductCard = ({ product, onInvest, className = '' }: ProductCardProps) => {
   return (
     <Card className={`earn-card ${className}`}>
-      <CardHeader>
+      <CardHeader className="pb-2">
         <CardTitle className="flex justify-between items-center">
-          <span>{product.name}</span>
+          <span>{product.currency}</span>
           <span className="text-secondary">{product.apy}% APY</span>
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
+        <div className="space-y-2">
           <p className="text-sm text-gray-600">{product.description}</p>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <p className="earn-label">Min Deposit</p>
-              <p className="earn-stat">{product.minDeposit} {product.currency}</p>
-            </div>
-            <div>
-              <p className="earn-label">Risk Level</p>
-              <p className="earn-stat">{product.riskLevel}</p>
-            </div>
-          </div>
           <Button 
             onClick={() => onInvest(product)}
             className="w-full"
