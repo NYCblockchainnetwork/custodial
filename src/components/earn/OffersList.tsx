@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { createEarnAPI } from '@/services/earnApi';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Bitcoin, Ethereum, CircleDollarSign } from 'lucide-react';
+import { Bitcoin, CircleDollarSign, Coins } from 'lucide-react';
 
 // Initialize API with configuration
 const earnApi = createEarnAPI(
@@ -14,7 +14,7 @@ const getCryptoIcon = (currency: string) => {
     case 'BTC':
       return <Bitcoin className="w-8 h-8" />;
     case 'ETH':
-      return <Ethereum className="w-8 h-8" />;
+      return <Coins className="w-8 h-8" />;
     default:
       return <CircleDollarSign className="w-8 h-8" />;
   }
