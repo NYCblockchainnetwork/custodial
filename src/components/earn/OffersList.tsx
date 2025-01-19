@@ -10,6 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { TransactionForm } from './TransactionForm';
 
 // Initialize API with configuration
 const earnApi = createEarnAPI(
@@ -99,16 +100,15 @@ export const OffersList = () => {
                     </DialogTitle>
                   </DialogHeader>
                   <div className="space-y-4 py-4">
-                    <Button className="w-full" onClick={() => {}}>
-                      Deposit to Earn Account
-                    </Button>
-                    <Button 
-                      className="w-full" 
-                      variant="outline"
-                      onClick={() => {}}
-                    >
-                      Withdraw From Earn Account
-                    </Button>
+                    <TransactionForm
+                      type="deposit"
+                      currency={product.currency}
+                      maxAmount={520.023}
+                      onSubmit={async (amount) => {
+                        // Handle deposit
+                        console.log('Deposit:', amount);
+                      }}
+                    />
                   </div>
                 </DialogContent>
               </Dialog>
