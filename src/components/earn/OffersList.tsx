@@ -75,7 +75,7 @@ interface OffersListProps {
   variant?: LayoutVariant;
 }
 
-export const OffersList = ({ variant = 'default' }: OffersListProps) => {
+export const OffersList = ({ variant = 'neo-brutalism' }: OffersListProps) => {
   const { data: products = sampleProducts } = useQuery({
     queryKey: ['earnProducts'],
     queryFn: () => Promise.resolve(sampleProducts),
@@ -97,6 +97,12 @@ export const OffersList = ({ variant = 'default' }: OffersListProps) => {
         return 'border-white/20 backdrop-blur-sm hover:bg-white/90';
       case 'gradient':
         return 'border-indigo-100 hover:from-indigo-100 hover:to-purple-100';
+      case 'modern':
+        return 'border-slate-100 hover:shadow-lg';
+      case 'futuristic':
+        return 'border-purple-500/30 hover:border-purple-400/40';
+      case 'neo-brutalism':
+        return 'border-[3px] border-black hover:translate-x-[3px] hover:translate-y-[3px] hover:shadow-none';
       default:
         return 'border-gray-200 hover:bg-gray-50';
     }
