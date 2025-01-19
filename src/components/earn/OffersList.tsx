@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { createEarnAPI } from '@/services/earnApi';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Bitcoin, CircleDollarSign, Coins } from 'lucide-react';
+import { Bitcoin, CircleDollarSign, Coins, DollarSign } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -13,11 +13,34 @@ import {
 import { TransactionForm } from './TransactionForm';
 import { offerLayouts, LayoutVariant } from '@/lib/layoutVariants';
 
-// Initialize API with configuration
-const earnApi = createEarnAPI(
-  import.meta.env.VITE_API_BASE_URL || 'https://api-sandbox.coinchange.io',
-  import.meta.env.VITE_API_KEY || ''
-);
+// Sample products for demonstration
+const sampleProducts = [
+  {
+    id: 'sample-usdc',
+    currency: 'USDC',
+    apy: 9.5,
+  },
+  {
+    id: 'sample-usdt',
+    currency: 'USDT',
+    apy: 8.75,
+  },
+  {
+    id: 'sample-eth',
+    currency: 'ETH',
+    apy: 5.2,
+  },
+  {
+    id: 'sample-btc',
+    currency: 'BTC',
+    apy: 4.8,
+  },
+  {
+    id: 'sample-dai',
+    currency: 'DAI',
+    apy: 8.9,
+  }
+];
 
 const getCryptoIcon = (currency: string) => {
   switch (currency.toUpperCase()) {
@@ -25,6 +48,10 @@ const getCryptoIcon = (currency: string) => {
       return <Bitcoin className="w-8 h-8" />;
     case 'ETH':
       return <Coins className="w-8 h-8" />;
+    case 'USDC':
+    case 'USDT':
+    case 'DAI':
+      return <DollarSign className="w-8 h-8" />;
     default:
       return <CircleDollarSign className="w-8 h-8" />;
   }
@@ -41,27 +68,16 @@ const getCryptoName = (currency: string) => {
   return names[currency] || currency;
 };
 
-// Sample product for demonstration - can be commented out when not needed
-const sampleProduct = {
-  id: 'sample-usdc',
-  currency: 'USDC',
-  apy: 9.5,
-};
-
 interface OffersListProps {
   variant?: LayoutVariant;
 }
 
 export const OffersList = ({ variant = 'default' }: OffersListProps) => {
-  const { data: products = [] } = useQuery({
+  // Using sample data instead of API call
+  const { data: products = sampleProducts } = useQuery({
     queryKey: ['earnProducts'],
-    queryFn: () => earnApi.getProducts(),
+    queryFn: () => Promise.resolve(sampleProducts),
   });
-
-  // Uncomment the next line to include the sample USDC product
-  const allProducts = [...products, sampleProduct];
-  // Comment out the above line and uncomment the next line to remove sample product
-  // const allProducts = products;
 
   return (
     <Card className={`w-full max-w-2xl mx-auto ${offerLayouts[variant]}`}>
@@ -71,7 +87,7 @@ export const OffersList = ({ variant = 'default' }: OffersListProps) => {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {allProducts.map((product) => (
+        {products.map((product) => (
           <div
             key={product.id}
             className="flex items-center justify-between p-4 border-b last:border-b-0"
