@@ -141,8 +141,8 @@ export const OffersList = ({ variant = 'default' }: OffersListProps) => {
                       currency={product.currency}
                       maxAmount={520.023}
                       variant={variant}
-                      onSubmit={async (amount) => {
-                        console.log('Deposit:', amount);
+                      onSubmit={async (amount, currency) => {
+                        console.log('Deposit:', amount, 'Currency:', currency);
                       }}
                     />
                   </div>
