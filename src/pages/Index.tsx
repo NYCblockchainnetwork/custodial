@@ -3,6 +3,7 @@ import { createEarnAPI } from '@/services/earnApi';
 import { ProductCard } from '@/components/earn/ProductCard';
 import { TransactionForm } from '@/components/earn/TransactionForm';
 import { TransactionHistory } from '@/components/earn/TransactionHistory';
+import { OffersList } from '@/components/earn/OffersList';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
@@ -68,6 +69,11 @@ const Index = () => {
 
   return (
     <div className="container mx-auto py-8 space-y-8">
+      {/* Offers Section */}
+      <section>
+        <OffersList />
+      </section>
+
       {/* Products Section */}
       <section>
         <h2 className="text-2xl font-bold mb-4">Earn Products</h2>
