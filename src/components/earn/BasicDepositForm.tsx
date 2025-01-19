@@ -8,12 +8,14 @@ import { toast } from '@/hooks/use-toast';
 interface BasicDepositFormProps {
   apy?: number;
   currency?: string;
+  maxAmount?: number;
   onSubmit?: (amount: number) => Promise<void>;
 }
 
 export const BasicDepositForm = ({ 
   apy = 7.4,
   currency = 'USDC',
+  maxAmount = 1000000,
   onSubmit 
 }: BasicDepositFormProps) => {
   const [amount, setAmount] = useState<string>('');
@@ -84,6 +86,9 @@ export const BasicDepositForm = ({
               required
               className="w-full"
             />
+            <p className="text-sm opacity-70">
+              Available: {maxAmount} {currency}
+            </p>
           </div>
           <Button
             type="submit"
