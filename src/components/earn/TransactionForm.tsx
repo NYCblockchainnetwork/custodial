@@ -102,13 +102,18 @@ export const TransactionForm = ({
             value={selectedCurrency}
             onValueChange={setSelectedCurrency}
           >
-            <SelectTrigger className="w-full">
+            <SelectTrigger className="w-full bg-background">
               <SelectValue placeholder="Select currency" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-background border shadow-lg">
               {products.map((product) => (
-                <SelectItem key={product.currency} value={product.currency}>
-                  {product.currency}
+                <SelectItem 
+                  key={product.currency} 
+                  value={product.currency}
+                  className="flex justify-between items-center"
+                >
+                  <span>{product.currency}</span>
+                  <span className="text-secondary text-sm">{product.apy}% APY</span>
                 </SelectItem>
               ))}
             </SelectContent>
