@@ -8,9 +8,9 @@ export const formLayouts = {
 
 export const offerLayouts = {
   default: "bg-[#F1F0FB] text-[#222222] hover:bg-[#E7E6F7]",
-  dark: "bg-[#221F26] text-[#F1F1F1] hover:bg-[#2A2631]",
-  bright: "bg-white text-[#333333] hover:bg-orange-50",
-  pastel: "bg-[#F2FCE2] text-[#555555] hover:bg-[#E8F8D8]",
+  dark: "bg-[#221F26] text-[#F1F1F1] hover:bg-[#2A2631] border-gray-700",
+  bright: "bg-gradient-to-r from-orange-100 to-rose-100 text-[#333333] hover:from-orange-200 hover:to-rose-200",
+  pastel: "bg-[#F2FCE2] text-[#555555] hover:bg-[#E8F8D8] border-green-200",
   monochrome: "bg-[#8E9196] text-white hover:bg-[#7A7D82]"
 } as const;
 

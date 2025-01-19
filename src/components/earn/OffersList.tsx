@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query';
-import { createEarnAPI } from '@/services/earnApi';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Bitcoin, CircleDollarSign, Coins, DollarSign } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -79,6 +78,21 @@ export const OffersList = ({ variant = 'default' }: OffersListProps) => {
     queryFn: () => Promise.resolve(sampleProducts),
   });
 
+  const getItemStyles = () => {
+    switch (variant) {
+      case 'dark':
+        return 'border-gray-700 hover:bg-gray-800';
+      case 'bright':
+        return 'border-orange-200 hover:bg-orange-50';
+      case 'pastel':
+        return 'border-green-200 hover:bg-green-50';
+      case 'monochrome':
+        return 'border-gray-400 hover:bg-gray-200';
+      default:
+        return 'border-gray-200 hover:bg-gray-50';
+    }
+  };
+
   return (
     <Card className={`w-full max-w-2xl mx-auto ${offerLayouts[variant]}`}>
       <CardHeader>
@@ -90,7 +104,7 @@ export const OffersList = ({ variant = 'default' }: OffersListProps) => {
         {products.map((product) => (
           <div
             key={product.id}
-            className="flex items-center justify-between p-4 border-b last:border-b-0"
+            className={`flex items-center justify-between p-4 border-b last:border-b-0 rounded-lg transition-colors ${getItemStyles()}`}
           >
             <div className="flex items-center gap-3">
               {getCryptoIcon(product.currency)}
@@ -109,7 +123,10 @@ export const OffersList = ({ variant = 'default' }: OffersListProps) => {
               </div>
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button variant="secondary" size="sm">
+                  <Button 
+                    variant={variant === 'dark' ? 'secondary' : 'default'} 
+                    size="sm"
+                  >
                     Earn
                   </Button>
                 </DialogTrigger>
