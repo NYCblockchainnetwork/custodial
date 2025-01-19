@@ -14,6 +14,17 @@ class EarnAPI {
   }
 
   private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+    // For development/demo purposes, return mock data instead of making API calls
+    if (endpoint.includes('transactions')) {
+      return this.getMockTransactions() as T;
+    }
+    if (endpoint.includes('balances')) {
+      return this.getMockBalances() as T;
+    }
+    if (endpoint.includes('products')) {
+      return this.getMockProducts() as T;
+    }
+
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       ...options,
       headers: {
@@ -28,6 +39,61 @@ class EarnAPI {
     }
 
     return response.json();
+  }
+
+  private getMockTransactions(): Transaction[] {
+    return [
+      {
+        id: '1',
+        type: 'deposit',
+        amount: 1000,
+        currency: 'USDC',
+        status: 'completed',
+        timestamp: new Date(Date.now() - 86400000).toISOString(), // Yesterday
+      },
+      {
+        id: '2',
+        type: 'earning',
+        amount: 5.25,
+        currency: 'USDC',
+        status: 'completed',
+        timestamp: new Date(Date.now() - 43200000).toISOString(), // 12 hours ago
+      },
+      {
+        id: '3',
+        type: 'withdrawal',
+        amount: 200,
+        currency: 'USDC',
+        status: 'pending',
+        timestamp: new Date().toISOString(), // Now
+      },
+    ];
+  }
+
+  private getMockBalances(): Balance[] {
+    return [
+      {
+        currency: 'USDC',
+        total: 2500,
+        available: 2300,
+        earning: 200,
+      }
+    ];
+  }
+
+  private getMockProducts(): EarnProduct[] {
+    return [
+      {
+        id: '1',
+        name: 'USDC Earn',
+        currency: 'USDC',
+        apy: 8.5,
+        minDeposit: 100,
+        maxDeposit: 100000,
+        description: 'Earn yield on your USDC holdings',
+        riskLevel: 'Low',
+      }
+    ];
   }
 
   /**
