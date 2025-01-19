@@ -38,7 +38,7 @@ export const ProductCard = ({ product, onInvest, className = '' }: ProductCardPr
             onClick={() => onInvest(product)}
             className="w-full"
           >
-            Invest Now
+            Earn Now
           </Button>
         </div>
       </CardContent>
