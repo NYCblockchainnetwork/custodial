@@ -30,6 +30,9 @@ export const ProductCard = ({ product, onInvest, className = '' }: ProductCardPr
           >
             Earn Now
           </Button>
+          <p className="text-sm opacity-70 text-center mt-2">
+            APY based on previous 14-day performance
+          </p>
         </div>
       </CardContent>
     </Card>
