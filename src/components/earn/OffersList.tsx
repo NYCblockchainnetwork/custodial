@@ -1,3 +1,4 @@
+
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Bitcoin, CircleDollarSign, Coins, DollarSign } from 'lucide-react';
@@ -22,7 +23,7 @@ const sampleProducts = [
   {
     id: 'sample-usdt',
     currency: 'USDT',
-    apy: 9.2,
+    apy: 9.5,
     description: 'Earn on your USDT holdings'
   },
   {
@@ -40,7 +41,7 @@ const sampleProducts = [
   {
     id: 'sample-dai',
     currency: 'DAI',
-    apy: 8.9,
+    apy: 9.5,
     description: 'Earn on your DAI holdings'
   }
 ];
