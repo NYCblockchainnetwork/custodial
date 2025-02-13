@@ -35,7 +35,7 @@ const sampleProducts = [
   {
     id: 'sample-btc',
     currency: 'BTC',
-    apy: 8.3,
+    apy: 8.5,
     description: 'Earn on your BTC holdings'
   },
   {
