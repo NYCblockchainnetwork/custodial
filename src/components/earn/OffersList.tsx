@@ -22,19 +22,19 @@ const sampleProducts = [
   {
     id: 'sample-usdt',
     currency: 'USDT',
-    apy: 8.75,
+    apy: 9.2,
     description: 'Earn on your USDT holdings'
   },
   {
     id: 'sample-eth',
     currency: 'ETH',
-    apy: 5.2,
+    apy: 8.5,
     description: 'Earn on your ETH holdings'
   },
   {
     id: 'sample-btc',
     currency: 'BTC',
-    apy: 4.8,
+    apy: 8.3,
     description: 'Earn on your BTC holdings'
   },
   {
