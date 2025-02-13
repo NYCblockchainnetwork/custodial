@@ -17,13 +17,13 @@ const sampleProducts = [
   {
     id: 'sample-usdc',
     currency: 'USDC',
-    apy: 9.5,
+    apy: 8.0,
     description: 'Earn on your USDC holdings'
   },
   {
     id: 'sample-usdt',
     currency: 'USDT',
-    apy: 9.5,
+    apy: 8.0,
     description: 'Earn on your USDT holdings'
   },
   {
@@ -41,7 +41,7 @@ const sampleProducts = [
   {
     id: 'sample-dai',
     currency: 'DAI',
-    apy: 9.5,
+    apy: 8.0,
     description: 'Earn on your DAI holdings'
   }
 ];
