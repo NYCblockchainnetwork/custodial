@@ -97,9 +97,15 @@ const getCryptoName = (currency: string) => {
 
 interface OffersListProps {
   variant?: LayoutVariant;
+  className?: string;
+  containerClassName?: string;
 }
 
-export const OffersList = ({ variant = 'default' }: OffersListProps) => {
+export const OffersList = ({ 
+  variant = 'default', 
+  className = '',
+  containerClassName = ''
+}: OffersListProps) => {
   const { data: products = sampleProducts, isLoading, error } = useQuery({
     queryKey: ['earnProducts'],
     queryFn: () => earnApi.getProducts(),
@@ -134,13 +140,13 @@ export const OffersList = ({ variant = 'default' }: OffersListProps) => {
   };
 
   return (
-    <Card className={`w-full max-w-2xl mx-auto ${offerLayouts[variant]}`}>
+    <Card className={`w-full mx-auto bg-white ${offerLayouts[variant]} ${className}`}>
       <CardHeader className="pb-2">
         <CardTitle className="text-2xl font-bold">
           Earn Products
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-2">
+      <CardContent className={`space-y-2 ${containerClassName}`}>
         {isLoading ? (
           <div className="text-center py-4">Loading products...</div>
         ) : error ? (
@@ -148,58 +154,60 @@ export const OffersList = ({ variant = 'default' }: OffersListProps) => {
             Error loading products. Using sample data.
           </div>
         ) : (
-          products.map((product) => (
-            <div
-              key={product.id}
-              className={`flex items-center justify-between p-3 border-b last:border-b-0 rounded-lg transition-colors ${getItemStyles()}`}
-            >
-              <div className="flex items-center gap-3">
-                {getCryptoIcon(product.currency)}
-                <div>
-                  <div className="font-medium">
-                    {getCryptoName(product.currency)}
-                  </div>
-                  <div className="text-sm opacity-70">
-                    {product.description}
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="text-lg font-semibold">
-                  {product.apy.toFixed(1)}% APY
-                </div>
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button 
-                      variant={variant === 'dark' ? 'secondary' : 'default'} 
-                      size="sm"
-                    >
-                      Earn
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle className="flex items-center gap-2">
-                        {getCryptoIcon(product.currency)}
-                        {getCryptoName(product.currency)}
-                      </DialogTitle>
-                    </DialogHeader>
-                    <div className="space-y-4 py-4">
-                      <TransactionForm
-                        type="deposit"
-                        currency={product.currency}
-                        maxAmount={520.023}
-                        variant={variant}
-                        onSubmit={async (amount, currency) => {
-                          console.log('Deposit:', amount, 'Currency:', currency);
-                        }}
-                      />
+          <div className="flex flex-col space-y-2">
+            {products.map((product) => (
+              <div
+                key={product.id}
+                className={`flex items-center justify-between p-3 border-b last:border-b-0 rounded-lg transition-colors ${getItemStyles()}`}
+              >
+                <div className="flex items-center gap-3">
+                  {getCryptoIcon(product.currency)}
+                  <div>
+                    <div className="font-medium">
+                      {getCryptoName(product.currency)}
                     </div>
-                  </DialogContent>
-                </Dialog>
+                    <div className="text-sm opacity-70">
+                      {product.description}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="text-lg font-semibold">
+                    {product.apy.toFixed(1)}% APY
+                  </div>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button 
+                        variant={variant === 'dark' ? 'secondary' : 'default'} 
+                        size="sm"
+                      >
+                        Earn
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2">
+                          {getCryptoIcon(product.currency)}
+                          {getCryptoName(product.currency)}
+                        </DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-4 py-4">
+                        <TransactionForm
+                          type="deposit"
+                          currency={product.currency}
+                          maxAmount={520.023}
+                          variant={variant}
+                          onSubmit={async (amount, currency) => {
+                            console.log('Deposit:', amount, 'Currency:', currency);
+                          }}
+                        />
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </div>
               </div>
-            </div>
-          ))
+            ))}
+          </div>
         )}
         <p className="text-sm opacity-70 text-center mt-2">
           APY based on previous 14-day performance

@@ -1,10 +1,11 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    /* Base theme colors */
+    /* Base theme colors - easily customizable for white-labeling */
     --primary-color: #1E3A8A;
     --primary-foreground: #FFFFFF;
     --secondary-color: #059669;
@@ -28,12 +29,38 @@
 
     /* Border radius */
     --radius: 0.5rem;
+
+    /* Custom component variables */
+    --earn-product-bg: #FFFFFF;
+    --earn-product-hover: #F8FAFC;
+    --earn-product-border: #E2E8F0;
+    --earn-product-apy-color: #059669;
+  }
+
+  /* Custom dark theme - partners can override */
+  .theme-dark {
+    --primary-color: #6366F1;
+    --primary-foreground: #FFFFFF;
+    --secondary-color: #10B981;
+    --secondary-foreground: #FFFFFF;
+    --accent-color: #8B5CF6;
+    --accent-foreground: #FFFFFF;
+
+    --background: #1E293B;
+    --foreground: #F8FAFC;
+    --card-background: #334155;
+    --card-foreground: #F8FAFC;
+
+    --earn-product-bg: #1E293B;
+    --earn-product-hover: #334155;
+    --earn-product-border: #475569;
+    --earn-product-apy-color: #10B981;
   }
 }
 
 /* Custom utility classes */
 .earn-card {
-  @apply rounded-lg border p-6 shadow-sm transition-all hover:shadow-md;
+  @apply rounded-lg border p-6 shadow-sm transition-all hover:shadow-md bg-white;
 }
 
 .earn-stat {
@@ -42,4 +69,23 @@
 
 .earn-label {
   @apply text-sm text-gray-600;
+}
+
+/* Make dropdown text always visible */
+.select-content {
+  @apply bg-white text-black;
+}
+
+.select-item {
+  @apply text-black hover:bg-gray-100;
+}
+
+/* Grid layouts for product lists */
+.earn-products-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full;
+}
+
+/* Create flexible container for products */
+.earn-products-container {
+  @apply flex flex-col md:flex-row flex-wrap gap-4 w-full;
 }

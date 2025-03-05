@@ -35,16 +35,44 @@ npm install
 npm run dev
 ```
 
-## Integration Guide
+## Environment Variables
 
-### API Configuration
+Configure the following environment variables for your deployment:
 
-The platform is designed to connect to a Yield-as-a-Service API. For development and demonstration purposes, it includes mock data support that can be toggled on/off.
+```
+# API Configuration
+VITE_API_BASE_URL=https://api.example.com
+VITE_API_KEY=your-api-key
+VITE_USE_MOCK_DATA=true
 
-1. Configure your API connection in `src/config/api.ts`
-2. Set environment variables:
-   - `VITE_API_BASE_URL`: Your API base URL
-   - `VITE_API_KEY`: Your API key
+# Feature Flags
+VITE_FEATURE_EARNINGS=true
+VITE_FEATURE_TRANSACTIONS=true
+```
+
+## White-Label Integration Guide
+
+The platform is designed for easy customization and modular integration into existing applications.
+
+### Customizing Theme
+
+1. **CSS Variables**: Update CSS variables in `src/index.css` to match your brand colors:
+
+```css
+:root {
+  --primary-color: #YOUR_BRAND_COLOR;
+  --secondary-color: #YOUR_SECONDARY_COLOR;
+  /* Other variables... */
+}
+```
+
+2. **Custom Theme Class**: Apply theme classes to containers:
+
+```jsx
+<div className="theme-dark">
+  <OffersList />
+</div>
+```
 
 ### Module Integration
 
@@ -62,9 +90,51 @@ import { OffersList } from '@/components/earn/OffersList';
 
 // With custom styling variant
 <OffersList variant="dark" />
+
+// With custom container styling
+<OffersList containerClassName="ml-0 w-full" className="bg-white" />
 ```
 
-#### 2. Transaction Module
+Available variants: `default`, `dark`, `bright`, `pastel`, `monochrome`, `minimal`, `glass`, `gradient`, `modern`, `futuristic`, `neo-brutalism`
+
+#### 2. Individual Product Item
+
+For even more granular control, use the `EarnProductItem` component:
+
+```jsx
+import { EarnProductItem } from '@/components/earn/EarnProductItem';
+
+<EarnProductItem
+  product={product}
+  variant="default"
+  onEarnClick={(product) => openDepositModal(product)}
+  className="my-custom-class"
+/>
+```
+
+#### 3. Product Card
+
+For a card-based layout of individual products:
+
+```jsx
+import { ProductCard } from '@/components/earn/ProductCard';
+
+<ProductCard
+  product={product}
+  onInvest={handleInvest}
+  variant="default"
+  className="my-custom-class"
+/>
+
+// Use in a responsive grid
+<div className="earn-products-grid">
+  {products.map(product => (
+    <ProductCard key={product.id} product={product} onInvest={handleInvest} />
+  ))}
+</div>
+```
+
+#### 4. Transaction Module
 
 The `TransactionForm` component handles deposits and withdrawals:
 
@@ -77,6 +147,7 @@ import { TransactionForm } from '@/components/earn/TransactionForm';
   currency="USDC"
   maxAmount={1000}
   onSubmit={handleDeposit}
+  variant="default"
 />
 
 // Withdrawal form
@@ -88,7 +159,7 @@ import { TransactionForm } from '@/components/earn/TransactionForm';
 />
 ```
 
-#### 3. Transaction History Module
+#### 5. Transaction History Module
 
 The `TransactionHistory` component displays transaction records:
 
@@ -98,7 +169,7 @@ import { TransactionHistory } from '@/components/earn/TransactionHistory';
 <TransactionHistory transactions={transactions} />
 ```
 
-#### 4. API Configuration Panel
+#### 6. API Configuration Panel
 
 The `ApiConfigPanel` component provides a UI for toggling between mock data and live API:
 
@@ -108,6 +179,7 @@ import { ApiConfigPanel } from '@/components/earn/ApiConfigPanel';
 <ApiConfigPanel 
   onConfigChange={(config) => {
     console.log('API config changed:', config);
+    // Refetch data with new configuration
   }} 
 />
 ```
@@ -136,48 +208,116 @@ const transactions = await earnApi.getTransactions();
 
 // Toggle mock data (for demos/testing)
 earnApi.setUseMockData(true);
+
+// Update API configuration programmatically
+earnApi.updateConfig({
+  baseUrl: 'https://new-api-url.com',
+  apiKey: 'new-api-key',
+  useMockData: false,
+  features: { earnings: true, transactions: false }
+});
 ```
 
-## Design Customization
+## Custom Layout Examples
 
-The platform supports multiple design variants through the `variant` prop on components:
-
-- `default`: Standard design
-- `dark`: Dark theme
-- `bright`: Bright orange accents
-- `pastel`: Soft green accents
-- `monochrome`: Grayscale design
-- `minimal`: Minimalist design
-- `glass`: Glassmorphism effect
-- `gradient`: Gradient backgrounds
-- `modern`: Modern clean design
-- `futuristic`: Futuristic purple accents
-- `neo-brutalism`: Bold neo-brutalist design
+### Basic Integration
 
 ```jsx
-<OffersList variant="dark" />
-<TransactionForm variant="minimal" />
+import { OffersList } from '@/components/earn/OffersList';
+
+function MyEarnSection() {
+  return (
+    <div className="container mx-auto py-8">
+      <h1 className="text-2xl font-bold mb-4">Earn with Crypto</h1>
+      <OffersList />
+    </div>
+  );
+}
 ```
 
-## Development
+### Advanced Integration with Custom Styling
 
-### Available Scripts
+```jsx
+import { useQuery } from '@tanstack/react-query';
+import { earnApi } from '@/services/earnApi';
+import { ProductCard } from '@/components/earn/ProductCard';
 
-- `npm run dev`: Start development server
-- `npm run build`: Build for production
-- `npm run preview`: Preview production build
+function CustomEarnDashboard() {
+  const { data: products = [] } = useQuery({
+    queryKey: ['earnProducts'],
+    queryFn: () => earnApi.getProducts(),
+  });
 
-### Adding New Products
+  return (
+    <div className="bg-gray-50 p-8 rounded-lg">
+      <h1 className="text-3xl font-bold mb-6">Grow Your Crypto</h1>
+      <p className="mb-6 text-gray-600">Choose from our selection of earning products:</p>
+      
+      <div className="earn-products-grid">
+        {products.map(product => (
+          <ProductCard 
+            key={product.id} 
+            product={product} 
+            variant="modern"
+            onInvest={(product) => console.log('Selected:', product)}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+```
 
-To add new earning products, modify the mock data in `src/services/earnApi.ts` or connect to your API.
+### Full Dashboard Integration
 
-### White Labeling
+```jsx
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { OffersList } from '@/components/earn/OffersList';
+import { TransactionHistory } from '@/components/earn/TransactionHistory';
+import { TransactionForm } from '@/components/earn/TransactionForm';
+import { earnApi } from '@/services/earnApi';
+import { useQuery } from '@tanstack/react-query';
 
-To white label the platform:
+function EarnDashboard() {
+  const { data: transactions = [] } = useQuery({
+    queryKey: ['earnTransactions'],
+    queryFn: () => earnApi.getTransactions(),
+  });
 
-1. Customize the theme in `tailwind.config.ts`
-2. Update component variants in `src/lib/layoutVariants.ts`
-3. Replace logos and branding elements
+  return (
+    <div className="container mx-auto py-8">
+      <h1 className="text-3xl font-bold mb-8">Earn Dashboard</h1>
+      
+      <Tabs defaultValue="products">
+        <TabsList>
+          <TabsTrigger value="products">Products</TabsTrigger>
+          <TabsTrigger value="deposit">Deposit</TabsTrigger>
+          <TabsTrigger value="transactions">History</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="products">
+          <OffersList variant="modern" />
+        </TabsContent>
+        
+        <TabsContent value="deposit">
+          <TransactionForm 
+            type="deposit" 
+            currency="USDC" 
+            maxAmount={1000} 
+            onSubmit={(amount, currency) => {
+              earnApi.deposit(amount, currency);
+            }}
+          />
+        </TabsContent>
+        
+        <TabsContent value="transactions">
+          <TransactionHistory transactions={transactions} />
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+}
+```
 
 ## Deployment
 
