@@ -1,3 +1,4 @@
+
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Bitcoin, CircleDollarSign, Coins, DollarSign } from 'lucide-react';
@@ -12,37 +13,59 @@ import {
 import { TransactionForm } from './TransactionForm';
 import { offerLayouts, LayoutVariant } from '@/lib/layoutVariants';
 import { earnApi } from '@/services/earnApi';
+import { EarnProduct } from '@/types/earn';
 
-const sampleProducts = [
+// Updated sample products to match the EarnProduct interface
+const sampleProducts: EarnProduct[] = [
   {
     id: 'sample-usdc',
+    name: 'USDC Earn',
     currency: 'USDC',
     apy: 9.5,
-    description: 'Earn on your USDC holdings'
+    minDeposit: 100,
+    maxDeposit: 100000,
+    description: 'Earn on your USDC holdings',
+    riskLevel: 'Low'
   },
   {
     id: 'sample-usdt',
+    name: 'USDT Earn',
     currency: 'USDT',
     apy: 9.5,
-    description: 'Earn on your USDT holdings'
+    minDeposit: 100,
+    maxDeposit: 100000,
+    description: 'Earn on your USDT holdings',
+    riskLevel: 'Low'
   },
   {
     id: 'sample-eth',
+    name: 'ETH Earn',
     currency: 'ETH',
     apy: 8.5,
-    description: 'Earn on your ETH holdings'
+    minDeposit: 0.05,
+    maxDeposit: 1000,
+    description: 'Earn on your ETH holdings',
+    riskLevel: 'Medium'
   },
   {
     id: 'sample-btc',
+    name: 'BTC Earn',
     currency: 'BTC',
     apy: 8.5,
-    description: 'Earn on your BTC holdings'
+    minDeposit: 0.01,
+    maxDeposit: 100,
+    description: 'Earn on your BTC holdings',
+    riskLevel: 'Medium'
   },
   {
     id: 'sample-dai',
+    name: 'DAI Earn',
     currency: 'DAI',
     apy: 9.5,
-    description: 'Earn on your DAI holdings'
+    minDeposit: 100,
+    maxDeposit: 100000,
+    description: 'Earn on your DAI holdings',
+    riskLevel: 'Low'
   }
 ];
 

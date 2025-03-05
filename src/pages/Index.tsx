@@ -102,7 +102,7 @@ const Index = () => {
             <ProductCard
               key={product.id}
               product={product}
-              onEarn={() => {}}
+              onInvest={() => {}}
             />
           ))}
         </div>
