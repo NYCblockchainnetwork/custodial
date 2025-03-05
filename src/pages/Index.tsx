@@ -1,65 +1,78 @@
+
 import { useQuery } from '@tanstack/react-query';
-import { createEarnAPI } from '@/services/earnApi';
 import { ProductCard } from '@/components/earn/ProductCard';
 import { TransactionForm } from '@/components/earn/TransactionForm';
 import { TransactionHistory } from '@/components/earn/TransactionHistory';
 import { OffersList } from '@/components/earn/OffersList';
 import { BasicWithdrawalForm } from '@/components/earn/BasicWithdrawalForm';
 import { BasicDepositForm } from '@/components/earn/BasicDepositForm';
+import { ApiConfigPanel } from '@/components/earn/ApiConfigPanel';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-
-// Initialize API with configuration
-const earnApi = createEarnAPI(
-  import.meta.env.VITE_API_BASE_URL || 'https://api-sandbox.coinchange.io',
-  import.meta.env.VITE_API_KEY || ''
-);
+import { earnApi } from '@/services/earnApi';
+import { useState } from 'react';
 
 const Index = () => {
   const { toast } = useToast();
+  const [apiConfig, setApiConfig] = useState({ useMockData: true });
 
   // Fetch products
-  const { data: products = [] } = useQuery({
-    queryKey: ['earnProducts'],
+  const { data: products = [], refetch: refetchProducts } = useQuery({
+    queryKey: ['earnProducts', apiConfig],
     queryFn: () => earnApi.getProducts(),
   });
 
   // Fetch balances
-  const { data: balances = [] } = useQuery({
-    queryKey: ['earnBalances'],
+  const { data: balances = [], refetch: refetchBalances } = useQuery({
+    queryKey: ['earnBalances', apiConfig],
     queryFn: () => earnApi.getBalances(),
   });
 
   // Fetch transactions
-  const { data: transactions = [] } = useQuery({
-    queryKey: ['earnTransactions'],
+  const { data: transactions = [], refetch: refetchTransactions } = useQuery({
+    queryKey: ['earnTransactions', apiConfig],
     queryFn: () => earnApi.getTransactions(),
   });
 
-  const handleInvest = async (amount: number) => {
+  const handleApiConfigChange = (newConfig: { useMockData: boolean }) => {
+    setApiConfig(newConfig);
+    
+    // Refetch data with new config
+    setTimeout(() => {
+      refetchProducts();
+      refetchBalances();
+      refetchTransactions();
+    }, 0);
+  };
+
+  const handleDeposit = async (amount: number, currency: string) => {
     try {
-      await earnApi.deposit(amount, 'USDC');
+      await earnApi.deposit(amount, currency);
       toast({
-        title: "Investment Successful",
-        description: `Successfully invested ${amount} USDC`,
+        title: "Deposit Successful",
+        description: `Successfully deposited ${amount} ${currency}`,
       });
+      refetchBalances();
+      refetchTransactions();
     } catch (error) {
       toast({
-        title: "Investment Failed",
-        description: "There was an error processing your investment",
+        title: "Deposit Failed",
+        description: "There was an error processing your deposit",
         variant: "destructive",
       });
     }
   };
 
-  const handleWithdraw = async (amount: number) => {
+  const handleWithdraw = async (amount: number, currency: string) => {
     try {
-      await earnApi.withdraw(amount, 'USDC');
+      await earnApi.withdraw(amount, currency);
       toast({
         title: "Withdrawal Successful",
-        description: `Successfully withdrew ${amount} USDC`,
+        description: `Successfully withdrew ${amount} ${currency}`,
       });
+      refetchBalances();
+      refetchTransactions();
     } catch (error) {
       toast({
         title: "Withdrawal Failed",
@@ -71,6 +84,11 @@ const Index = () => {
 
   return (
     <div className="container mx-auto py-8 space-y-8">
+      {/* API Configuration Panel */}
+      <section>
+        <ApiConfigPanel onConfigChange={handleApiConfigChange} />
+      </section>
+
       {/* Offers Section */}
       <section>
         <OffersList />
@@ -84,7 +102,7 @@ const Index = () => {
             <ProductCard
               key={product.id}
               product={product}
-              onInvest={() => {}}
+              onEarn={() => {}}
             />
           ))}
         </div>
@@ -107,7 +125,7 @@ const Index = () => {
                   type="deposit"
                   currency="USDC"
                   maxAmount={1000000}
-                  onSubmit={handleInvest}
+                  onSubmit={handleDeposit}
                 />
               </TabsContent>
               <TabsContent value="withdraw">

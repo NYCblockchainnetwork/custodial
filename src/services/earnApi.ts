@@ -1,14 +1,40 @@
 import { Balance, EarnProduct, Transaction } from '@/types/earn';
+import { DEFAULT_API_CONFIG, API_FEATURES } from '@/config/api';
 
 export class EarnAPI {
   private baseUrl: string;
   private apiKey: string;
   private useMockData: boolean;
+  private features: Record<string, boolean>;
 
-  constructor(baseUrl: string, apiKey: string, useMockData = true) {
+  /**
+   * Creates an instance of the Earn API client
+   * @param baseUrl - Base URL for the API
+   * @param apiKey - API key for authentication
+   * @param useMockData - Whether to use mock data (for development/demo)
+   * @param features - Feature flags for specific API modules
+   */
+  constructor(
+    baseUrl: string = DEFAULT_API_CONFIG.baseUrl, 
+    apiKey: string = DEFAULT_API_CONFIG.apiKey, 
+    useMockData = DEFAULT_API_CONFIG.useMockData,
+    features = API_FEATURES
+  ) {
     this.baseUrl = baseUrl;
     this.apiKey = apiKey;
     this.useMockData = useMockData;
+    this.features = features;
+    
+    // Log API configuration in non-production environments
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('EarnAPI initialized with:', { 
+        baseUrl, 
+        useMockData, 
+        features: { ...features },
+        // Don't log API key for security
+        hasApiKey: !!apiKey
+      });
+    }
   }
 
   private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
@@ -25,6 +51,7 @@ export class EarnAPI {
       }
     }
 
+    // Real API request
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       ...options,
       headers: {
@@ -35,7 +62,14 @@ export class EarnAPI {
     });
 
     if (!response.ok) {
-      throw new Error(`API request failed: ${response.statusText}`);
+      const errorText = await response.text().catch(() => 'Unknown error');
+      console.error('API request failed:', {
+        status: response.status,
+        statusText: response.statusText,
+        endpoint,
+        errorText
+      });
+      throw new Error(`API request failed: ${response.statusText} (${response.status})`);
     }
 
     return response.json();
@@ -96,8 +130,47 @@ export class EarnAPI {
     ];
   }
 
-  public setUseMockData(useMock: boolean) {
+  /**
+   * Enables or disables mock data mode
+   * @param useMock - Whether to use mock data
+   */
+  public setUseMockData(useMock: boolean): void {
     this.useMockData = useMock;
+    console.log(`Mock data mode ${useMock ? 'enabled' : 'disabled'}`);
+  }
+
+  /**
+   * Updates API configuration
+   * @param config - New configuration
+   */
+  public updateConfig(config: Partial<{
+    baseUrl: string;
+    apiKey: string;
+    useMockData: boolean;
+    features: Partial<Record<string, boolean>>;
+  }>): void {
+    if (config.baseUrl) this.baseUrl = config.baseUrl;
+    if (config.apiKey) this.apiKey = config.apiKey;
+    if (config.useMockData !== undefined) this.useMockData = config.useMockData;
+    if (config.features) {
+      this.features = { ...this.features, ...config.features };
+    }
+    
+    console.log('API configuration updated:', { 
+      baseUrl: this.baseUrl, 
+      useMockData: this.useMockData,
+      features: { ...this.features },
+      hasApiKey: !!this.apiKey
+    });
+  }
+
+  /**
+   * Checks if a specific feature is enabled
+   * @param featureName - Feature to check
+   * @returns Whether the feature is enabled
+   */
+  public isFeatureEnabled(featureName: string): boolean {
+    return this.features[featureName] === true;
   }
 
   async getProducts(): Promise<EarnProduct[]> {
@@ -139,6 +212,20 @@ export class EarnAPI {
   }
 }
 
-export const createEarnAPI = (baseUrl: string, apiKey: string, useMockData = true) => {
+/**
+ * Creates an EarnAPI instance with the specified configuration
+ * @param baseUrl - Base URL for the API
+ * @param apiKey - API key for authentication
+ * @param useMockData - Whether to use mock data (for development/demo)
+ * @returns EarnAPI instance
+ */
+export const createEarnAPI = (
+  baseUrl: string = DEFAULT_API_CONFIG.baseUrl, 
+  apiKey: string = DEFAULT_API_CONFIG.apiKey, 
+  useMockData = DEFAULT_API_CONFIG.useMockData
+): EarnAPI => {
   return new EarnAPI(baseUrl, apiKey, useMockData);
 };
+
+// Create a default instance that can be imported and used throughout the app
+export const earnApi = createEarnAPI();
