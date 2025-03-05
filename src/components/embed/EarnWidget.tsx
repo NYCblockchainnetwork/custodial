@@ -1,8 +1,8 @@
-
 import React, { useEffect, useState } from 'react';
 import { useEarnAPI } from '@/hooks/useEarnAPI';
 import { EarnProduct } from '@/types/earn';
 import { Button } from '@/components/ui/button';
+import { EmbedEarnProduct, adaptProductToEarnType } from '@/types/embed';
 
 interface EarnWidgetProps {
   partnerId: string;
@@ -23,6 +23,18 @@ export const EarnWidget: React.FC<EarnWidgetProps> = ({
 }) => {
   const { products, isLoading, error } = useEarnAPI(partnerId);
   const [selectedProduct, setSelectedProduct] = useState<EarnProduct | null>(null);
+
+  // Convert products from API to our internal EarnProduct type if needed
+  const earnProducts: EarnProduct[] = Array.isArray(products) 
+    ? products.map(product => {
+        // If the product already matches our EarnProduct interface, use it directly
+        if ('currency' in product && 'minDeposit' in product) {
+          return product as EarnProduct;
+        }
+        // Otherwise, adapt it from the embed product type
+        return adaptProductToEarnType(product as unknown as EmbedEarnProduct);
+      })
+    : [];
 
   // Apply partner-specific theme
   useEffect(() => {
@@ -72,7 +84,7 @@ export const EarnWidget: React.FC<EarnWidgetProps> = ({
       <h2 className="text-xl font-bold mb-4">Earn Products</h2>
       
       <div className="grid grid-cols-1 gap-4">
-        {products.map((product) => (
+        {earnProducts.map((product) => (
           <div 
             key={product.id} 
             className="p-4 rounded-lg border hover:shadow-md transition-all bg-card text-card-foreground"
@@ -99,7 +111,7 @@ export const EarnWidget: React.FC<EarnWidgetProps> = ({
         ))}
       </div>
       
-      {products.length === 0 && (
+      {earnProducts.length === 0 && (
         <p className="text-center py-4">No Earn products available at this time.</p>
       )}
     </div>
