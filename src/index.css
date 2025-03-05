@@ -12,6 +12,7 @@
     --secondary-foreground: #FFFFFF;
     --accent-color: #6366F1;
     --accent-foreground: #FFFFFF;
+    --accent-hover: #818cf8; /* Added for hover state */
 
     /* Background and text colors */
     --background: #FFFFFF;
@@ -48,6 +49,7 @@
     --secondary-foreground: #FFFFFF;
     --accent-color: #8B5CF6;
     --accent-foreground: #FFFFFF;
+    --accent-hover: #a78bfa; /* Added for hover state */
 
     --background: #1E293B;
     --foreground: #F8FAFC;
@@ -123,5 +125,5 @@
 }
 
 .select-item:hover {
-  @apply bg-accent/20;
+  @apply bg-[--accent-hover];
 }
