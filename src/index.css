@@ -35,6 +35,9 @@
     --earn-product-hover: #F8FAFC;
     --earn-product-border: #E2E8F0;
     --earn-product-apy-color: #059669;
+
+    /* Border color */
+    --border: #E2E8F0;
   }
 
   /* Custom dark theme - partners can override */
@@ -55,6 +58,9 @@
     --earn-product-hover: #334155;
     --earn-product-border: #475569;
     --earn-product-apy-color: #10B981;
+
+    /* Border color for dark theme */
+    --border: #475569;
   }
   
   /* Partner-specific themes */
@@ -109,7 +115,7 @@
 .select-trigger, 
 .select-content,
 .select-item {
-  @apply text-foreground bg-background border-border;
+  @apply text-foreground bg-background border border-[--border];
 }
 
 .select-item[data-highlighted] {

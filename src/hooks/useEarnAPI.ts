@@ -1,128 +1,173 @@
+import { useState, useEffect } from 'react';
+import { DEFAULT_API_CONFIG, getPartnerConfig, PartnerConfig, API_FEATURES } from '../config/api';
 
-import { useState } from 'react';
-import { EarnAPI } from '@/services/earnApi';
-import { getPartnerConfig, DEFAULT_API_CONFIG } from '@/config/api';
-import { useQuery } from '@tanstack/react-query';
-import { Balance, EarnProduct, Transaction } from '@/types/earn';
+interface EarnProduct {
+  id: string;
+  currency: string;
+  apy: number;
+  description: string;
+}
 
-/**
- * Custom hook for easy integration with the Earn API
- * Partners can use this hook to easily access all Earn functionality
- * 
- * @param partnerId - Optional partner ID (defaults to env variable)
- * @returns Object with API methods and data
- */
-export const useEarnAPI = (partnerId: string = DEFAULT_API_CONFIG.partnerId) => {
-  const [error, setError] = useState<Error | null>(null);
+interface Balance {
+  currency: string;
+  amount: number;
+}
+
+interface EarnAPI {
+  products: EarnProduct[];
+  balances: Balance[];
+  deposit: (amount: number, currency: string) => Promise<any>;
+  withdraw: (amount: number, currency: string) => Promise<any>;
+  isLoading: boolean;
+  error: Error | null;
+}
+
+interface EarnAPIOptions {
+  useMockData?: boolean;
+  apiKey?: string;
+  baseUrl?: string;
+}
+
+export function useEarnAPI(partnerId = DEFAULT_API_CONFIG.partnerId, options: EarnAPIOptions = {}): EarnAPI {
+  const {
+    useMockData = DEFAULT_API_CONFIG.useMockData,
+    apiKey = DEFAULT_API_CONFIG.apiKey,
+    baseUrl = DEFAULT_API_CONFIG.baseUrl,
+  } = options;
+
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const [products, setProducts] = useState<EarnProduct[]>([]);
+  const [balances, setBalances] = useState<Balance[]>([]);
+  const [partnerConfig, setPartnerConfig] = useState<PartnerConfig | null>(null);
 
-  // Fetch partner config
-  const { data: config, isLoading: configLoading } = useQuery({
-    queryKey: ['partnerConfig', partnerId],
-    queryFn: () => getPartnerConfig(partnerId),
-  });
+  useEffect(() => {
+    const loadData = async () => {
+      setIsLoading(true);
+      setError(null);
 
-  // Initialize API instance
-  const api = new EarnAPI(
-    config?.baseUrl || DEFAULT_API_CONFIG.baseUrl,
-    config?.apiKey || DEFAULT_API_CONFIG.apiKey,
-    DEFAULT_API_CONFIG.useMockData,
-    config?.features
-  );
+      try {
+        const config = await getPartnerConfig(partnerId);
+        setPartnerConfig(config);
 
-  // Enhanced API request with better error handling
-  const enhancedRequest = async <T>(
-    apiMethod: () => Promise<T>,
-    errorMessage: string
-  ): Promise<T | null> => {
-    setError(null);
-    setIsLoading(true);
-    
+        if (useMockData) {
+          // Mock data for development/testing
+          setProducts([
+            { id: 'btc-product', currency: 'BTC', apy: 4.5, description: 'Earn on your Bitcoin' },
+            { id: 'eth-product', currency: 'ETH', apy: 6.0, description: 'Earn on your Ethereum' },
+          ]);
+          setBalances([
+            { currency: 'BTC', amount: 0.5 },
+            { currency: 'ETH', amount: 2.0 },
+          ]);
+        } else {
+          // Fetch data from the actual API
+          const productsResponse = await fetch(`${baseUrl}/api/yaas/v1/products/`, {
+            headers: {
+              'Authorization': `Bearer ${apiKey}`,
+              'X-Partner-ID': partnerId
+            }
+          });
+          if (!productsResponse.ok) {
+            throw new Error(`Failed to fetch products: ${productsResponse.statusText}`);
+          }
+          setProducts(await productsResponse.json());
+
+          const balancesResponse = await fetch(`${baseUrl}/api/yaas/v1/earn_clients/balances/`, {
+            headers: {
+              'Authorization': `Bearer ${apiKey}`,
+              'X-Partner-ID': partnerId
+            }
+          });
+          if (!balancesResponse.ok) {
+            throw new Error(`Failed to fetch balances: ${balancesResponse.statusText}`);
+          }
+          setBalances(await balancesResponse.json());
+        }
+      } catch (err: any) {
+        setError(err instanceof Error ? err : new Error(String(err)));
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadData();
+  }, [partnerId, useMockData, apiKey, baseUrl]);
+
+  const deposit = async (amount: number, currency: string): Promise<any> => {
+    if (!partnerConfig) {
+      setError(new Error('Partner configuration not loaded.'));
+      return;
+    }
+
     try {
-      const result = await apiMethod();
-      return result;
-    } catch (err) {
-      const errorObj = err instanceof Error ? err : new Error(errorMessage);
-      console.error(`Earn API Error: ${errorObj.message}`, err);
-      setError(errorObj);
-      return null;
-    } finally {
-      setIsLoading(false);
+      const response = await fetch(`${baseUrl}/api/yaas/v1/earn_clients/deposit/notify/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`,
+          'X-Partner-ID': partnerId
+        },
+        body: JSON.stringify({
+          amount,
+          currency
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Deposit failed: ${response.statusText}`);
+      }
+
+      return await response.json();
+    } catch (err: any) {
+      setError(err instanceof Error ? err : new Error(String(err)));
     }
   };
 
-  // Products data query
-  const productsQuery = useQuery({
-    queryKey: ['earnProducts', partnerId],
-    queryFn: () => api.getProducts(),
-    enabled: !configLoading,
-  });
+  const withdraw = async (amount: number, currency: string): Promise<any> => {
+    if (!partnerConfig) {
+      setError(new Error('Partner configuration not loaded.'));
+      return;
+    }
 
-  // Balances data query
-  const balancesQuery = useQuery({
-    queryKey: ['earnBalances', partnerId],
-    queryFn: () => api.getBalances(),
-    enabled: !configLoading,
-  });
+    try {
+      const response = await fetch(`${baseUrl}/api/yaas/v1/earn_clients/withdraw/notify/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`,
+          'X-Partner-ID': partnerId
+        },
+        body: JSON.stringify({
+          amount,
+          currency
+        })
+      });
 
-  // Transactions data query
-  const transactionsQuery = useQuery({
-    queryKey: ['earnTransactions', partnerId],
-    queryFn: () => api.getTransactions(),
-    enabled: !configLoading,
-  });
+      if (!response.ok) {
+        throw new Error(`Withdrawal failed: ${response.statusText}`);
+      }
 
-  // API methods
+      return await response.json();
+    } catch (err: any) {
+      setError(err instanceof Error ? err : new Error(String(err)));
+    }
+  };
+  
+  // Ensure we're passing an object with the correct properties when using API_FEATURES
+  const getFeatures = () => {
+    return {
+      earnings: API_FEATURES.earnings ?? true,
+      transactions: API_FEATURES.transactions ?? true
+    };
+  };
+
   return {
-    // Data
-    products: productsQuery.data || [],
-    balances: balancesQuery.data || [],
-    transactions: transactionsQuery.data || [],
-    config,
-    
-    // Status
-    isLoading: isLoading || configLoading || productsQuery.isLoading || balancesQuery.isLoading,
-    error,
-    
-    // API methods
-    deposit: (amount: number, currency: string) => 
-      enhancedRequest(() => api.deposit(amount, currency), "Deposit failed"),
-      
-    withdraw: (amount: number, currency: string) => 
-      enhancedRequest(() => api.withdraw(amount, currency), "Withdrawal failed"),
-      
-    getBalances: () => 
-      enhancedRequest(() => api.getBalances(), "Failed to fetch balances"),
-      
-    getTransactions: () => 
-      enhancedRequest(() => api.getTransactions(), "Failed to fetch transactions"),
-      
-    getProducts: () => 
-      enhancedRequest(() => api.getProducts(), "Failed to fetch products"),
-      
-    // Refetch data
-    refetch: () => {
-      productsQuery.refetch();
-      balancesQuery.refetch();
-      transactionsQuery.refetch();
-    }
+    products,
+    balances,
+    deposit,
+    withdraw,
+    isLoading,
+    error
   };
-};
-
-/**
- * Example usage:
- * 
- * const { 
- *   products, 
- *   balances, 
- *   deposit, 
- *   withdraw, 
- *   isLoading, 
- *   error 
- * } = useEarnAPI('partner-123');
- * 
- * // Deposit funds
- * const handleDeposit = async () => {
- *   await deposit(100, 'USDC');
- * };
- */
+}

@@ -53,6 +53,8 @@ export default {
           DEFAULT: "var(--error-color)",
           foreground: "var(--error-foreground)",
         },
+        // Border color
+        border: "var(--border)",
       },
       borderRadius: {
         lg: "var(--radius)",
