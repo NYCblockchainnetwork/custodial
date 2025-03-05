@@ -137,7 +137,7 @@ export const OffersList = ({ variant = 'default' }: OffersListProps) => {
     <Card className={`w-full max-w-2xl mx-auto ${offerLayouts[variant]}`}>
       <CardHeader className="pb-2">
         <CardTitle className="text-2xl font-bold">
-          Earn Account earnings performance
+          Earn Products
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-2">

@@ -105,12 +105,12 @@ export const TransactionForm = ({
             <SelectTrigger className="w-full bg-background">
               <SelectValue placeholder="Select currency" />
             </SelectTrigger>
-            <SelectContent className="bg-background border shadow-lg">
+            <SelectContent className="border shadow-lg">
               {products.map((product) => (
                 <SelectItem 
                   key={product.currency} 
                   value={product.currency}
-                  className="flex justify-between items-center hover:bg-[#F1F1F1] data-[state=checked]:bg-[#F1F1F1] [&>*]:transition-none"
+                  className="flex justify-between items-center hover:bg-gray-100 data-[state=checked]:bg-gray-100"
                 >
                   <span>{product.currency}</span>
                   <span className="text-secondary ml-2">{product.apy}% APY</span>
