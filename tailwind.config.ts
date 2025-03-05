@@ -81,7 +81,7 @@ export default {
   // Enable arbitrary values and additional property support
   safelist: [
     {
-      pattern: /bg-(primary|secondary|accent|success|warning|error|background)\/\d+/,
+      pattern: /bg-(primary|secondary|accent|success|warning|error|background)(\/\d+)?/,
     },
   ],
 } satisfies Config;
