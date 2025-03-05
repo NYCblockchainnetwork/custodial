@@ -56,6 +56,21 @@
     --earn-product-border: #475569;
     --earn-product-apy-color: #10B981;
   }
+  
+  /* Partner-specific themes */
+  .theme-partner-123 {
+    --primary-color: #0F172A;
+    --primary-foreground: #FFFFFF;
+    --secondary-color: #047857;
+    --secondary-foreground: #FFFFFF;
+  }
+  
+  .theme-partner-456 {
+    --primary-color: #7C3AED;
+    --primary-foreground: #FFFFFF;
+    --secondary-color: #10B981;
+    --secondary-foreground: #FFFFFF;
+  }
 }
 
 /* Custom utility classes */
@@ -88,4 +103,19 @@
 /* Create flexible container for products */
 .earn-products-container {
   @apply flex flex-col md:flex-row flex-wrap gap-4 w-full;
+}
+
+/* Fix dropdown text color */
+.select-trigger, 
+.select-content,
+.select-item {
+  @apply text-foreground bg-background border-border;
+}
+
+.select-item[data-highlighted] {
+  @apply bg-accent text-accent-foreground;
+}
+
+.select-item:hover {
+  @apply bg-accent/20;
 }
